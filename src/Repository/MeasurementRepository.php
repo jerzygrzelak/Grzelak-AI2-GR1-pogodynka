@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\City;
 use App\Entity\Measurement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,17 @@ class MeasurementRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Measurement::class);
+    }
+    public function findByLocation(City $city)
+    {
+        $qb = $this->createQueryBuilder('m');
+        $qb->where('m.city_id = :city_id')
+            ->setParameter('city_id', $city->getId())
+            ->andWhere('m.date >= :now')
+            ->setParameter('now', date('Y-m-d'));
+
+        $query = $qb->getQuery();
+        return $query->getResult();
     }
 
     // /**
