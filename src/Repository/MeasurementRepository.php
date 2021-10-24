@@ -19,14 +19,27 @@ class MeasurementRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Measurement::class);
     }
+
     public function findByLocation(City $city)
     {
         $qb = $this->createQueryBuilder('m');
         $qb->where('m.city_id = :city_id')
             ->setParameter('city_id', $city->getId())
-            ->andWhere('m.date >= :now')
-            ->setParameter('now', date('Y-m-d'));
+            ->andWhere('m.date <= :now')
+            ->setParameter('now', date('Y-m-d'))
+        ->orderBy('m.date','desc');
 
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
+    public function findByLocationToday(City $city)
+    {
+        $qb = $this->createQueryBuilder('m');
+        $qb->where('m.city_id = :city_id')
+            ->setParameter('city_id', $city->getId())
+            ->andWhere('m.date = :now')
+            ->setParameter('now', date('Y-m-d'));
         $query = $qb->getQuery();
         return $query->getResult();
     }
