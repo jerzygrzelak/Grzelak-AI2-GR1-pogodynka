@@ -4,9 +4,14 @@ namespace App\Controller;
 
 use App\Entity\City;
 use App\Entity\Measurement;
+use App\Form\CityType;
 use App\Repository\CityRepository;
 use App\Repository\MeasurementRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -37,6 +42,22 @@ class WeatherController extends AbstractController
             'controller_name' => 'WeatherController',
         ]);
     }
+    public function homeAction(Request $request): Response
+    {
+        $city=new City();
+        $form=$this->createForm(CityType::class,$city);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $city = $form->getData();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($city);
+            $entityManager->flush();
+            $this->addFlash('success','Success!');
+        }
+        return $this->render('weather/home.html.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
     public function cityAction(string $country, string $city, MeasurementRepository $measurementRepository,CityRepository $cityRepository): Response
     {
         $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
@@ -51,5 +72,8 @@ class WeatherController extends AbstractController
             'location' => $cityObject,
             'measurements' => $measurements,
         ]);
+    }
+    public function newLocationAction(Request $request):Response{
+        dd('hej');
     }
 }
