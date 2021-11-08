@@ -7,6 +7,14 @@ create:
   path: /create
   controller: App\Controller\WeatherController:index
 
+cities:
+  path: /cities
+  controller: App\Controller\WeatherController:citiesListAction
+
+measurements:
+  path: /measurements
+  controller: App\Controller\WeatherController:measurementsListAction
+
 home:
   path: /
   controller: App\Controller\WeatherController:homeAction
