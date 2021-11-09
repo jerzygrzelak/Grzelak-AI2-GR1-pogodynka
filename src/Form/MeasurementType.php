@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\City;
 use App\Entity\Measurement;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -21,7 +23,11 @@ class MeasurementType extends AbstractType
             ->add('wind_strength',NumberType::class)
             ->add('description',TextType::class)
             ->add('date',DateType::class)
-            ->add('cityName',TextType::class,array('mapped' => false))
+//            ->add('cityName',TextType::class,array('mapped' => false))
+                ->add('city_id',EntityType::class,[
+                    'class'=>City::class,
+                    'choice_label'=>'name',
+            ])
             ->add('save',SubmitType::class,['label'=>'Create Measurement']);
         ;
     }
