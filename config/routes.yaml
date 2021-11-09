@@ -17,6 +17,11 @@ create:
 edit-city:
   path: /edit-city/{country}/{city}
   controller: App\Controller\WeatherController:cityEdit
+
+delete-city:
+  path: /delete-city/{country}/{city}
+  controller: App\Controller\WeatherController:deleteCity
+
 home:
   path: /
   controller: App\Controller\WeatherController:homeAction

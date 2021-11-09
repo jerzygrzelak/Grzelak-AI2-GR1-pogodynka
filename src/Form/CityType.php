@@ -19,7 +19,7 @@ class CityType extends AbstractType
         ->add('country',TextType::class)
         ->add('latitude',NumberType::class)
         ->add('longitude',NumberType::class)
-        ->add('save',SubmitType::class,['label'=>'Create City']);
+        ->add('save',SubmitType::class,['label'=>'Submit']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

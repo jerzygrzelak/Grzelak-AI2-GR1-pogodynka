@@ -92,10 +92,27 @@ class WeatherController extends AbstractController
         ]);
     }
 
-    public function cityEdit(string $country, string $city,CityRepository $cityRepository):Response{
+    public function cityEdit(string $country, string $city,CityRepository $cityRepository, Request $request):Response{
         $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
+        $cityForm=$this->createForm(CityType::class,$cityObject);
+        $cityForm->handleRequest($request);
+        $entityManager = $this->getDoctrine()->getManager();
+        if ($cityForm->isSubmitted() && $cityForm->isValid()) {
+            $city = $cityForm->getData();
+            $entityManager->persist($city);
+            $entityManager->flush();
+            $this->addFlash('city-success','Success!');
+        }
         return $this->render('weather/edit-city.html.twig', [
+            'cityForm'=>$cityForm->createView(),
             'location' => $cityObject,
         ]);
+    }
+    public function deleteCity(string $country, string $city,CityRepository $cityRepository, Request $request):Response{
+        $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($cityObject);
+        $entityManager->flush();
+        return $this->redirectToRoute('home');
     }
 }
