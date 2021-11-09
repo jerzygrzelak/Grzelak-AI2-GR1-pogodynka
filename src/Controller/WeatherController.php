@@ -8,9 +8,7 @@ use App\Form\CityType;
 use App\Form\MeasurementType;
 use App\Repository\CityRepository;
 use App\Repository\MeasurementRepository;
-use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,24 +20,6 @@ class WeatherController extends AbstractController
 
     public function index(): Response
     {
-//        $entityManager = $this->getDoctrine()->getManager();
-//        $city=new City();
-//        $city->setName('Szczecin');
-//        $city->setLatitude(53.428);
-//        $city->setLongitude(14.552);
-//        $entityManager->persist($city);
-//        $entityManager->flush();
-//        $entityManager = $this->getDoctrine()->getManager();
-//        $city=$this->getDoctrine()->getRepository(City::class)->find(2);
-//        $product = new Measurement();
-//        $product->setCityId($city);
-//        $product->setTemperature(8);
-//        $product->setHumidity(12);
-//        $product->setWindStrength(20);
-//        $product->setDescription("Słonecznie");
-//        $product->setDate(new \DateTime);
-//        $entityManager->persist($product);
-//        $entityManager->flush();
         return $this->render('weather/index.html.twig', [
             'controller_name' => 'WeatherController',
         ]);
@@ -56,7 +36,6 @@ class WeatherController extends AbstractController
             $entityManager->flush();
             $this->addFlash('city-success','Success!');
         }
-
         $measurement=new Measurement();
         $measurementForm=$this->createForm(MeasurementType::class,$measurement);
         $measurementForm->handleRequest($request);
@@ -78,7 +57,21 @@ class WeatherController extends AbstractController
             $entityManager->flush();
             $this->addFlash('weather-success','Success!');
         }
+        $searchForm=$this->createFormBuilder()
+            ->add('country',TextType::class)
+            ->add('city',TextType::class)
+            ->add('save',SubmitType::class,[
+                'label'=>'Check weather'
+            ])
+            ->getForm();
+        $searchForm->handleRequest($request);
+        if($searchForm->isSubmitted() && $searchForm->isValid()){
+           $m=$this->getDoctrine()->getRepository(Measurement::class);
+           $c=$this->getDoctrine()->getRepository(City::class);
+           return $this->cityAction($searchForm->get('country')->getData(),$searchForm->get('city')->getData(),$m,$c);
+        }
         return $this->render('weather/home.html.twig',[
+            'searchForm'=>$searchForm->createView(),
             'cityForm'=>$cityForm->createView(),
             'measurementForm'=>$measurementForm->createView()
         ]);
@@ -95,26 +88,14 @@ class WeatherController extends AbstractController
         $measurements = $measurementRepository->findByLocation($cityObject);
         return $this->render('weather/city.html.twig', [
             'location' => $cityObject,
-            'measurements' => $measurements,n
-        ]);
-    }
-    public function  citiesListAction(Request $request):Response{
-
-        return $this->render('weather/cities.html.twig', [
-        ]);
-    }
-    public function  measurementsListAction(MeasurementRepository $measurementRepository,CityRepository $cityRepository):Response{
-        $measurements = $measurementRepository->findAll();
-        $cities=[];
-        foreach($measurements as $m){
-            if(!in_array($m->getCityId()->getName(),$cities)){
-                array_push($cities,$m->getCityId()->getName());
-            }
-        }
-        dd($cities);
-        //$cities=$cityRepository->findBy($measurements);
-        return $this->render('weather/measurements.html.twig', [
             'measurements' => $measurements,
+        ]);
+    }
+
+    public function cityEdit(string $country, string $city,CityRepository $cityRepository):Response{
+        $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
+        return $this->render('weather/edit-city.html.twig', [
+            'location' => $cityObject,
         ]);
     }
 }

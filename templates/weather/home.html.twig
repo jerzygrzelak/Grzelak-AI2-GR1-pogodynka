@@ -12,6 +12,11 @@
     <div class="example-wrapper">
         <h1>Homepage</h1>
         <div class="box">
+            <h2>Check the weather</h2>
+            {{ form(searchForm) }}
+        </div>
+        <br>
+        <div class="box">
             <h2>Add a city</h2>
             {{ form(cityForm) }}
             {% for message in app.flashes('city-success') %}
@@ -30,7 +35,5 @@
                 </div>
             {% endfor %}
         </div>
-        <p><a href="/cities"> Cities list</a></p>
-        <p><a href="/measurements">Measurements list</a></p>
     </div>
 {% endblock %}

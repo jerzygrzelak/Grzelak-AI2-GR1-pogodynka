@@ -9,11 +9,20 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>{{ location.name }}</h1>
+        <div>
+            <h1 style="display: inline-block">{{ location.name }}</h1>
+            <h2 style="display: inline-block">
+                <a href="/edit-city/{{ location.country }}/{{ location.name }}">Edit</a>
+                <a href="/">Delete</a>
+            </h2>
+        </div>
 
+        <h2><a href="/">Home</a></h2>
         <ul>
             {% for measurement in measurements %}
-                <li>{{ measurement.date|date('d.m.Y') }}: {{ measurement.temperature }}&deg;C</li>
+                <li>{{ measurement.date|date('d.m.Y') }}: {{ measurement.temperature }}&deg;C [<a href="/">Edit</a>]
+                    [<a href="/">Delete</a>]
+                </li>
             {% endfor %}
         </ul>
     </div>

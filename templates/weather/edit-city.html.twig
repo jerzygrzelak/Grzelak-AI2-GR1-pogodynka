@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cities list {% endblock %}
+{% block title %}Weather in {{ location.name }}, {% endblock %}
 
 {% block body %}
     <style>
@@ -9,7 +9,9 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>Cities list</h1>
-        <a href="/">Home</a>
+        <div>
+            <h1 style="display: inline-block">Editing {{ location.name }}</h1>
+        </div>
+        <h2><a href="/">Home</a></h2>
     </div>
 {% endblock %}
