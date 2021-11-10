@@ -1,0 +1,17 @@
+App\Entity\Measurement:
+  properties:
+    temperature:
+      - Range:
+          min: -70
+          max: 60
+          groups: [measurement]
+    humidity:
+      - Range:
+          min: 0
+          max: 100
+          groups: [measurement]
+    wind_strength:
+      - Range:
+          min: 0
+          groups: [measurement]
+

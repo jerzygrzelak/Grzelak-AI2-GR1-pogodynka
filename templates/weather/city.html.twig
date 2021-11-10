@@ -20,8 +20,8 @@
         <h2><a href="/">Home</a></h2>
         <ul>
             {% for measurement in measurements %}
-                <li>{{ measurement.date|date('d.m.Y') }}: {{ measurement.temperature }}&deg;C [<a href="/">Edit</a>]
-                    [<a href="/">Delete</a>]
+                <li>{{ measurement.date|date('d.m.Y') }}: {{ measurement.temperature }}&deg;C [<a href="edit-measurement/{{ measurement.id }}">Edit</a>]
+                    [<a href="delete-measurement/{{ measurement.id }}">Delete</a>]
                 </li>
             {% endfor %}
         </ul>

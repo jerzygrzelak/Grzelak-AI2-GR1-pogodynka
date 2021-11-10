@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit measurement {% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        .box {outline-style:solid; width:50%; padding: 0.2rem 1rem;}
+    </style>
+
+    <div class="example-wrapper">
+        <div>
+            <h1 style="display: inline-block">Editing measurement</h1>
+        </div>
+        <h2><a href="/">Home</a></h2>
+        <div class="box">
+            {{ form(measurementForm) }}
+            {% for message in app.flashes('edit-success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

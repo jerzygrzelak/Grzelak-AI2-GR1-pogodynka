@@ -28,7 +28,7 @@ class WeatherController extends AbstractController
     {
         $entityManager = $this->getDoctrine()->getManager();
         $city=new City();
-        $cityForm=$this->createForm(CityType::class,$city);
+        $cityForm=$this->createForm(CityType::class,$city,['validation_groups'=>'city']);
         $cityForm->handleRequest($request);
         if ($cityForm->isSubmitted() && $cityForm->isValid()) {
             $city = $cityForm->getData();
@@ -37,21 +37,10 @@ class WeatherController extends AbstractController
             $this->addFlash('city-success','Success!');
         }
         $measurement=new Measurement();
-        $measurementForm=$this->createForm(MeasurementType::class,$measurement);
+        $measurementForm=$this->createForm(MeasurementType::class,$measurement,['validation_groups'=>'measurement']);
         $measurementForm->handleRequest($request);
         if ($measurementForm->isSubmitted() && $measurementForm->isValid()) {
             $measurement = $measurementForm->getData();
-            $city=$this->getDoctrine()->getRepository(City::class)->findOneBy(array('name'=>$measurementForm->get('cityName')->getData()));
-            if($city==null){
-                $city=new City();
-                $city->setName($measurementForm->get('cityName')->getData());
-                $city->setCountry('Nigeria');
-                $city->setLatitude(53.428);
-                $city->setLongitude(14.552);
-                $entityManager->persist($city);
-                $entityManager->flush();
-            }
-            $measurement->setCityId($city);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($measurement);
             $entityManager->flush();
@@ -94,14 +83,14 @@ class WeatherController extends AbstractController
 
     public function cityEdit(string $country, string $city,CityRepository $cityRepository, Request $request):Response{
         $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
-        $cityForm=$this->createForm(CityType::class,$cityObject);
+        $cityForm=$this->createForm(CityType::class,$cityObject,['validation_groups'=>'city']);
         $cityForm->handleRequest($request);
         $entityManager = $this->getDoctrine()->getManager();
         if ($cityForm->isSubmitted() && $cityForm->isValid()) {
             $city = $cityForm->getData();
             $entityManager->persist($city);
             $entityManager->flush();
-            $this->addFlash('city-success','Success!');
+            $this->addFlash('edit-success','Success!');
         }
         return $this->render('weather/edit-city.html.twig', [
             'cityForm'=>$cityForm->createView(),
@@ -112,6 +101,29 @@ class WeatherController extends AbstractController
         $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($cityObject);
+        $entityManager->flush();
+        return $this->redirectToRoute('home');
+    }
+    public function measurementEdit(int $id,MeasurementRepository $measurementRepository, Request $request):Response{
+        $measurementObject=$measurementRepository->find($id);
+        $measurementForm=$this->createForm(MeasurementType::class,$measurementObject,['validation_groups'=>'measurement']);
+        $measurementForm->handleRequest($request);
+        $entityManager = $this->getDoctrine()->getManager();
+        if ($measurementForm->isSubmitted() && $measurementForm->isValid()) {
+            $m = $measurementForm->getData();
+            $entityManager->persist($m);
+            $entityManager->flush();
+            $this->addFlash('edit-success','Success!');
+        }
+        return $this->render('weather/edit-measurement.html.twig', [
+            'measurementForm'=>$measurementForm->createView(),
+            'measurement' => $measurementObject,
+        ]);
+    }
+    public function deleteMeasurement(int $id ,MeasurementRepository $measurementRepository, Request $request):Response{
+        $measurementObject=$measurementRepository->find($id);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($measurementObject);
         $entityManager->flush();
         return $this->redirectToRoute('home');
     }

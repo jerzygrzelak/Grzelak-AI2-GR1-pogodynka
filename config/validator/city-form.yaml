@@ -1,0 +1,18 @@
+App\Entity\City:
+  properties:
+    name:
+      - NotBlank:
+          groups: [city]
+    longitude:
+      - Range:
+          min: -180
+          max: 180
+          groups: [city]
+    latitude:
+      - Range:
+          min: -90
+          max: 90
+          groups: [city]
+    country:
+      - NotBlank:
+          groups: [city]

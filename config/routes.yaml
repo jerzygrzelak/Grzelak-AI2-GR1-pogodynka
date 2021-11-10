@@ -22,6 +22,14 @@ delete-city:
   path: /delete-city/{country}/{city}
   controller: App\Controller\WeatherController:deleteCity
 
+edit-measurement:
+  path: /edit-measurement/{id}
+  controller: App\Controller\WeatherController:measurementEdit
+
+delete-measurement:
+  path: /delete-measurement/{id}
+  controller: App\Controller\WeatherController:deleteMeasurement
+
 home:
   path: /
   controller: App\Controller\WeatherController:homeAction
