@@ -16,6 +16,11 @@
         <h2><a href="/">Home</a></h2>
         <div class="box">
             {{ form(cityForm) }}
+            {% for message in app.flashes('edit-success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
