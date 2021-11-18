@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20211024124009 extends AbstractMigration
+final class Version20211118215218 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,6 +20,9 @@ final class Version20211024124009 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username VARCHAR(180) NOT NULL, roles CLOB NOT NULL --(DC2Type:json)
+        , password VARCHAR(255) NOT NULL)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649F85E0677 ON user (username)');
         $this->addSql('DROP INDEX IDX_2CE0D8113CCE3900');
         $this->addSql('CREATE TEMPORARY TABLE __temp__measurement AS SELECT id, city_id_id, temperature, humidity, wind_strength, description, date FROM measurement');
         $this->addSql('DROP TABLE measurement');
@@ -32,11 +35,7 @@ final class Version20211024124009 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TEMPORARY TABLE __temp__city AS SELECT id, name, latitude, longitude FROM city');
-        $this->addSql('DROP TABLE city');
-        $this->addSql('CREATE TABLE city (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, latitude NUMERIC(10, 7) NOT NULL, longitude NUMERIC(10, 7) NOT NULL)');
-        $this->addSql('INSERT INTO city (id, name, latitude, longitude) SELECT id, name, latitude, longitude FROM __temp__city');
-        $this->addSql('DROP TABLE __temp__city');
+        $this->addSql('DROP TABLE user');
         $this->addSql('DROP INDEX IDX_2CE0D8113CCE3900');
         $this->addSql('CREATE TEMPORARY TABLE __temp__measurement AS SELECT id, city_id_id, temperature, humidity, wind_strength, description, date FROM measurement');
         $this->addSql('DROP TABLE measurement');

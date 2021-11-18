@@ -26,3 +26,9 @@ delete-measurement:
 home:
   path: /
   controller: App\Controller\WeatherController:homeAction
+
+any:
+  path: /{token}
+  controller: App\Controller\WeatherController:homeAction
+  requirements:
+    token: .*
