@@ -12,16 +12,21 @@
         <div>
             <h1 style="display: inline-block">{{ location.name }}</h1>
             <h2 style="display: inline-block">
+                {% if is_granted('ROLE_ADMIN') %}
                 [<a href="/edit-city/{{ location.country }}/{{ location.name }}">Edit</a>]
                 [<a href="/delete-city/{{ location.country }}/{{ location.name }}">Delete</a>]
+                {% endif %}
             </h2>
         </div>
 
         <h2><a href="/">Home</a></h2>
         <ul>
             {% for measurement in measurements %}
-                <li>{{ measurement.date|date('d.m.Y') }}: {{ measurement.temperature }}&deg;C [<a href="edit-measurement/{{ measurement.id }}">Edit</a>]
+                <li>{{ measurement.date|date('d.m.Y') }}: {{ measurement.temperature }}&deg;C
+                    {% if is_granted('ROLE_ADMIN') %}
+                    [<a href="edit-measurement/{{ measurement.id }}">Edit</a>]
                     [<a href="delete-measurement/{{ measurement.id }}">Delete</a>]
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

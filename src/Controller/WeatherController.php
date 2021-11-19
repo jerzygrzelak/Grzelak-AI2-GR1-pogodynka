@@ -20,12 +20,14 @@ class WeatherController extends AbstractController
 
     public function index(): Response
     {
+
         return $this->render('weather/index.html.twig', [
             'controller_name' => 'WeatherController',
         ]);
     }
     public function homeAction(Request $request): Response
     {
+//        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
         $city=new City();
         $cityForm=$this->createForm(CityType::class,$city,['validation_groups'=>'city']);
@@ -82,6 +84,7 @@ class WeatherController extends AbstractController
     }
 
     public function cityEdit(string $country, string $city,CityRepository $cityRepository, Request $request):Response{
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
         $cityForm=$this->createForm(CityType::class,$cityObject,['validation_groups'=>'city']);
         $cityForm->handleRequest($request);
@@ -98,6 +101,7 @@ class WeatherController extends AbstractController
         ]);
     }
     public function deleteCity(string $country, string $city,CityRepository $cityRepository, Request $request):Response{
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($cityObject);
@@ -105,6 +109,8 @@ class WeatherController extends AbstractController
         return $this->redirectToRoute('home');
     }
     public function measurementEdit(int $id,MeasurementRepository $measurementRepository, Request $request):Response{
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $measurementObject=$measurementRepository->find($id);
         $measurementForm=$this->createForm(MeasurementType::class,$measurementObject,['validation_groups'=>'measurement']);
         $measurementForm->handleRequest($request);
@@ -121,6 +127,8 @@ class WeatherController extends AbstractController
         ]);
     }
     public function deleteMeasurement(int $id ,MeasurementRepository $measurementRepository, Request $request):Response{
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $measurementObject=$measurementRepository->find($id);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($measurementObject);

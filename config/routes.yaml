@@ -1,4 +1,7 @@
 
+
+
+
 weather_in_city:
   path: /weather/{country}/{city}
   controller: App\Controller\WeatherController:cityAction
@@ -26,6 +29,15 @@ delete-measurement:
 home:
   path: /
   controller: App\Controller\WeatherController:homeAction
+
+login:
+  path: /login
+  controller: App\Controller\LoginController:login
+  methods: GET|POST
+
+logout:
+  path: /logout
+  methods: GET
 
 any:
   path: /{token}
