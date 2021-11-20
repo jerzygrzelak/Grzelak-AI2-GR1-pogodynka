@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Service\WeatherUtil;
 
 class WeatherController extends AbstractController
 {
@@ -25,7 +25,7 @@ class WeatherController extends AbstractController
             'controller_name' => 'WeatherController',
         ]);
     }
-    public function homeAction(Request $request): Response
+    public function homeAction(Request $request, WeatherUtil $weatherUtil): Response
     {
 //        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $entityManager = $this->getDoctrine()->getManager();
@@ -59,7 +59,7 @@ class WeatherController extends AbstractController
         if($searchForm->isSubmitted() && $searchForm->isValid()){
            $m=$this->getDoctrine()->getRepository(Measurement::class);
            $c=$this->getDoctrine()->getRepository(City::class);
-           return $this->cityAction($searchForm->get('country')->getData(),$searchForm->get('city')->getData(),$m,$c);
+           return $this->cityAction($searchForm->get('country')->getData(),$searchForm->get('city')->getData(),$c,$m,$weatherUtil);
         }
         return $this->render('weather/home.html.twig',[
             'searchForm'=>$searchForm->createView(),
@@ -67,19 +67,19 @@ class WeatherController extends AbstractController
             'measurementForm'=>$measurementForm->createView()
         ]);
     }
-    public function cityAction(string $country, string $city, MeasurementRepository $measurementRepository,CityRepository $cityRepository): Response
+    public function cityAction(string $country, string $city,CityRepository $cityRepository, MeasurementRepository $measurementRepository,
+                               WeatherUtil $weatherUtil): Response
     {
-        $cityObject=$cityRepository->findOneBy(['name'=>$city, 'country'=>$country]);
-        if($cityObject==null){
+        $response=$weatherUtil->getWeatherForCountryAndCity($country,$city,$measurementRepository, $cityRepository);
+        if($response===[]){
             return $this->render('weather/not-found.html.twig',[
                 'country'=>$country,
                 'city'=>$city
             ]);
         }
-        $measurements = $measurementRepository->findByLocation($cityObject);
         return $this->render('weather/city.html.twig', [
-            'location' => $cityObject,
-            'measurements' => $measurements,
+            'location' => $response['city'],
+            'measurements' => $response['measurements'],
         ]);
     }
 
