@@ -1,6 +1,8 @@
 
 
-
+weather-api:
+  path: /weather/api/{format}/{country}/{city}/
+  controller: App\Controller\WeatherApiController:weatherJsonAction
 
 weather_in_city:
   path: /weather/{country}/{city}
